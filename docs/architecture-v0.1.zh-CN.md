@@ -1,8 +1,8 @@
-# Berry Studio 技术架构方案 v0.1（中文）
+# Pig Studio 技术架构方案 v0.1（中文）
 
 ## 1. 目标与范围
 
-本方案基于 `docs/prd-v0.1.zh-CN.md`，覆盖 Berry Studio v0.1 MVP 的技术实现路径，目标是：
+本方案基于 `docs/prd-v0.1.zh-CN.md`，覆盖 Pig Studio v0.1 MVP 的技术实现路径，目标是：
 
 1. 支持按本地项目组织工作空间。
 2. 支持创建、恢复、删除 `agent sessions`。

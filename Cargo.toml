@@ -1,0 +1,15 @@
+[workspace]
+members = ["crates/app-core","crates/app-desktop", "crates/domain", "crates/infra-pimono", "crates/infra-settings", "crates/infra-sqlite", "crates/shared-kernel", "crates/ui-components"]
+resolver = "2"
+
+[profile]
+
+[profile.wasm-dev]
+inherits = "dev"
+opt-level = 1
+
+[profile.server-dev]
+inherits = "dev"
+
+[profile.android-dev]
+inherits = "dev"

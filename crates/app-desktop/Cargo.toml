@@ -1,0 +1,28 @@
+[package]
+name = "app-desktop"
+version = "0.1.0"
+edition = "2024"
+build = "build.rs"
+
+[lib]
+name = "app_desktop"
+path = "src/lib.rs"
+
+[dependencies]
+app-core = { path = "../app-core" }
+chrono = { version = "0.4", features = ["serde"] }
+dioxus = { version = "0.6.3", features = ["desktop"] }
+domain = { path = "../domain" }
+infra-pimono = { path = "../infra-pimono" }
+infra-settings = { path = "../infra-settings" }
+infra-sqlite = { path = "../infra-sqlite" }
+rfd = "0.15"
+serde_json = "1.0"
+shared-kernel = { path = "../shared-kernel" }
+tokio = { version = "1", features = ["time"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+ui-components = { path = "../ui-components" }
+
+[dev-dependencies]
+tempfile = "3.23"

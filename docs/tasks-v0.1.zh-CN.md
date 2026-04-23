@@ -1,8 +1,8 @@
-# Berry Studio v0.1 Implementation Plan
+# Pig Studio v0.1 Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use ordered `Step N` sections for sequential tracking.
 
-**Goal:** 基于 `docs/architecture-v0.1.zh-CN.md` 与 `docs/prd-v0.1.zh-CN.md`，将仓库重构为 Berry Studio v0.1 的 Dioxus Desktop Rust Workspace，并交付项目管理、会话生命周期、运行事件流、审批、恢复与运行时设置的 MVP。
+**Goal:** 基于 `docs/architecture-v0.1.zh-CN.md` 与 `docs/prd-v0.1.zh-CN.md`，将仓库重构为 Pig Studio v0.1 的 Dioxus Desktop Rust Workspace，并交付项目管理、会话生命周期、运行事件流、审批、恢复与运行时设置的 MVP。
 
 **Architecture:** 严格采用架构文档定义的分层结构：`Presentation -> Application -> Domain -> Infrastructure`。Presentation 使用 Dioxus Desktop + Tailwind CSS v4 + daisyUI 5 构建桌面 UI；Application 通过用例与事件总线编排流程；Domain 封装 `Project / Session / Run` 聚合与状态机；Infrastructure 提供 SQLite、`pi-mono`、设置、文件系统、平台与 worktree 能力。
 
@@ -17,7 +17,7 @@
 3. **Bun 仍保留**，但职责收缩为样式工具链与顶层脚本调度：`bun run build` 负责编译 CSS 并触发 Cargo 构建，保证团队命令习惯不变。
 4. **daisyUI / Tailwind 约束**：只使用 Tailwind utility 与 daisyUI class，不新增自定义视觉 CSS 规则；样式源文件只负责引入插件与主题。
 5. **MVP 聚焦单机本地能力**：不做团队协作、云编排、多 Agent 扩展、IDE 替代。
-6. **持久化边界**：Berry Studio 只存项目元数据、会话索引、事件、审批、设置与恢复所需非敏感数据；敏感值不落 SQLite。
+6. **持久化边界**：Pig Studio 只存项目元数据、会话索引、事件、审批、设置与恢复所需非敏感数据；敏感值不落 SQLite。
 7. **删除项目策略**：默认只解除应用关联，不删除真实项目目录与外部运行时数据。
 8. **worktree 策略**：Git 项目可选，非 Git 项目始终 direct；worktree 失败不得阻塞普通会话创建。
 9. **资源加载策略**：迁移 SQL 与样式等运行时资源不得依赖 repo root 或当前工作目录。迁移 SQL 使用编译期内嵌；CSS 使用桌面 bundle resource 方案（不使用编译期内嵌 CSS），并在打包形态验证可用。

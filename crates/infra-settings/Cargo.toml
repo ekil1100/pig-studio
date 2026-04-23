@@ -1,0 +1,16 @@
+[package]
+name = "infra-settings"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+app-core = { path = "../app-core" }
+chrono = { version = "0.4", features = ["serde"] }
+dirs = "6.0"
+domain = { path = "../domain" }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+shared-kernel = { path = "../shared-kernel" }
+
+[dev-dependencies]
+tempfile = "3.23"

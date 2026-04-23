@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# rust / dioxus
+/target/
+/crates/app-desktop/dist/
+/crates/app-desktop/assets/generated.css
+/.pig-studio-worktrees/

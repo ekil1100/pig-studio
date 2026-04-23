@@ -1,77 +1,62 @@
-# Berry Studio
+# Pig Studio
 
-一个基于 Next.js 和 Tauri 的桌面聊天应用。
+Pig Studio 是一个基于 `pi` / `pi-mono` 的原生桌面 `agent session workspace`。
+
+当前仓库已经迁移为 `Rust Workspace + Dioxus Desktop` 架构，围绕 `Project -> Session` 工作流提供会话管理、实时运行事件流、审批、恢复与运行时设置的基础能力。
+
+## 当前能力
+
+- `Project -> Session` 桌面工作区与历史会话导航
+- 像 Codex App 一样通过系统文件夹选择器添加项目，不需要手动输入项目路径
+- 自动检测 Pi 二进制与配置目录，并支持文件选择器方式的自定义覆盖
+- `pi` / `pi-mono` 输出的实时流式展示与 SQLite 事件持久化
+- 审批请求展示、决策回写与时间线记录
+- 启动恢复、运行对账、恢复失败后的只读降级
+- `Blocked / Interrupted` 会话上的“基于当前上下文新建会话”入口
+- Git worktree 与非 Git direct 模式双路径支持
 
 ## 技术栈
 
-- **前端**: Next.js 15.4.6 + React 19 + TypeScript
-- **样式**: Tailwind CSS 4 + ShadcnUI 组件库
-- **桌面应用**: Tauri 2.7.1 (Rust)
-- **包管理器**: Bun
+- Rust stable
+- Dioxus Desktop
+- Tailwind CSS v4 + daisyUI v5
+- SQLite
+- Bun + Cargo
 
-## 项目架构
+## 工作区结构
 
+```text
+pig-studio/
+├── Cargo.toml
+├── assets/
+│   └── styles/
+├── migrations/
+├── crates/
+│   ├── app-core/
+│   ├── app-desktop/
+│   ├── domain/
+│   ├── infra-pimono/
+│   ├── infra-settings/
+│   ├── infra-sqlite/
+│   ├── shared-kernel/
+│   └── ui-components/
+└── docs/
 ```
-berry-studio/
-├── src/                  # Next.js 前端代码
-│   ├── app/              # App Router 页面
-│   ├── components/       # React 组件
-│   └── lib/              # 工具函数
-├── src-tauri/            # Tauri 后端代码 (Rust)
-└── public/               # 静态资源
-```
 
-## 安装依赖
-
-确保你已经安装了以下工具：
-
-- [Bun](https://bun.sh/) - JavaScript 运行时和包管理器
-- [Rust](https://rustup.rs/) - Tauri 需要 Rust 环境
-
-安装项目依赖：
+## 常用命令
 
 ```bash
-# 安装前端依赖
-bun install
-
-# 如果需要安装 Tauri CLI（首次开发）
-bun add -D @tauri-apps/cli
+bun run build
+bun run test
+bun run format
+bun run dev
+bun run bundle:desktop
+bun run verify:bundle
 ```
 
-## 启动命令
+## 关键文档
 
-### 开发模式
-
-```bash
-# 启动 Next.js 开发服务器
-bun dev
-
-# 启动 Tauri 桌面应用（开发模式）
-bun tauri dev
-```
-
-### 构建打包
-
-```bash
-# 构建 Next.js 应用
-bun build
-
-# 构建 Tauri 桌面应用
-bun tauri build
-```
-
-## 开发说明
-
-- Web 版本访问: [http://localhost:3000](http://localhost:3000)
-- 桌面应用会自动启动一个窗口
-- 支持热重载，修改代码后自动更新
-- 使用 ShadcnUI 组件库，采用 "new-york" 风格
-
-## 添加 ShadcnUI 组件
-
-```bash
-# 添加新的 UI 组件
-bunx shadcn@latest add <component-name>
-```
-
-可用组件列表: https://ui.shadcn.com/docs/components
+- 产品需求：`docs/prd-v0.1.zh-CN.md`
+- 技术架构：`docs/architecture-v0.1.zh-CN.md`
+- 实施任务：`docs/tasks-v0.1.zh-CN.md`
+- 手工验收：`docs/manual-qa-v0.1.zh-CN.md`
