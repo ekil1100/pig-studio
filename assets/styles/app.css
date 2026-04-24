@@ -4,3 +4,76 @@
     light --default,
     dark --prefersdark;
 }
+
+@layer base {
+  :root {
+    color-scheme: light;
+    --color-base-100: oklch(0.995 0.001 286);
+    --color-base-200: oklch(0.972 0.003 286);
+    --color-base-300: oklch(0.914 0.006 286);
+    --color-base-content: oklch(0.24 0.016 270);
+    --color-primary: oklch(0.52 0.14 260);
+    --color-primary-content: oklch(0.99 0.002 286);
+    --color-secondary: oklch(0.58 0.06 230);
+    --color-secondary-content: oklch(0.99 0.002 286);
+    --color-accent: oklch(0.64 0.09 165);
+    --color-accent-content: oklch(0.18 0.014 160);
+    --color-neutral: oklch(0.29 0.014 270);
+    --color-neutral-content: oklch(0.98 0.002 286);
+    --color-info: oklch(0.62 0.1 245);
+    --color-success: oklch(0.64 0.11 150);
+    --color-warning: oklch(0.73 0.13 82);
+    --color-error: oklch(0.58 0.17 25);
+    font-family:
+      "Noto Sans CJK SC", "Noto Sans SC", "Source Han Sans SC",
+      "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB", "Segoe UI",
+      system-ui, sans-serif;
+    background: #f7f8fa;
+  }
+
+  html,
+  body {
+    min-height: 100%;
+    background: transparent;
+    color: var(--color-base-content);
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(128 140 173 / 0.42) transparent;
+  }
+}
+
+@layer components {
+  .studio-surface {
+    @apply rounded-lg border border-base-300 bg-base-100 shadow-none;
+  }
+
+  .studio-card {
+    @apply rounded-md border border-base-300 bg-base-100 shadow-none;
+  }
+
+  .studio-muted {
+    @apply text-sm leading-6 text-base-content/62;
+  }
+
+  .studio-kicker {
+    @apply text-xs font-medium text-base-content/45;
+  }
+
+  .studio-dot {
+    @apply inline-block h-2.5 w-2.5 rounded-full bg-primary/70;
+  }
+
+  .studio-badge {
+    @apply badge gap-2 border border-base-300 bg-base-100 px-2.5 py-2 font-medium;
+  }
+
+  .studio-input {
+    @apply input border-base-300 bg-base-100 shadow-none focus:border-primary/60 focus:outline-none;
+  }
+
+  .studio-textarea {
+    @apply textarea border-base-300 bg-base-100 shadow-none focus:border-primary/60 focus:outline-none;
+  }
+}

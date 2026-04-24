@@ -26,43 +26,54 @@ pub fn Sidebar(props: SidebarProps) -> Element {
 
     rsx! {
         aside {
-            class: "w-96 border-r border-base-300 bg-base-100 p-4",
+            class: "w-[292px] shrink-0 border-r border-base-300 bg-base-100",
             div {
-                class: "flex h-full flex-col gap-4",
+                class: "flex h-full min-h-screen flex-col gap-4 px-3 py-4",
                 div {
                     class: "space-y-3",
                     div {
-                        class: "flex items-center justify-between",
-                        h2 { class: "text-lg font-semibold", "项目工作区" }
+                        class: "flex items-center gap-3 px-2 py-2",
+                        div {
+                            class: "flex h-8 w-8 items-center justify-center rounded-md bg-primary text-sm font-semibold text-primary-content",
+                            "P"
+                        }
+                        div {
+                            p { class: "text-sm font-semibold", "Pig Studio" }
+                            p { class: "text-xs text-base-content/55", "Agent Session Workspace" }
+                        }
+                    }
+                    div {
+                        class: "flex items-center justify-between px-1",
+                        h2 { class: "studio-kicker", "Workspace" }
                         button {
-                            class: "btn btn-outline btn-sm",
+                            class: "btn btn-ghost btn-xs rounded-md px-2 text-base-content/70",
                             onclick: move |_| on_open_settings.call(()),
                             "运行时"
                         }
                     }
                     div {
-                        class: "card bg-base-200 shadow-sm",
+                        class: "rounded-md border border-base-300 bg-base-200/35",
                         div {
-                            class: "card-body gap-3 p-4",
-                            h3 { class: "card-title text-base", "添加项目" }
+                            class: "flex flex-col gap-2 p-3",
+                            h3 { class: "text-sm font-medium", "添加项目" }
                             p {
-                                class: "text-xs text-base-content/60",
+                                class: "text-xs leading-5 text-base-content/58",
                                 "直接选择本地文件夹即可，不需要手动输入项目路径。"
                             }
                             button {
-                                class: "btn btn-primary btn-sm",
+                                class: "btn btn-primary btn-sm min-h-8 h-8 rounded-md",
                                 onclick: move |_| on_pick_project_folder.call(()),
                                 "选择项目文件夹"
                             }
                         }
                     }
                     div {
-                        class: "card bg-base-200 shadow-sm",
+                        class: "rounded-md border border-base-300 bg-base-200/35",
                         div {
-                            class: "card-body gap-3 p-4",
-                            h3 { class: "card-title text-base", "新建会话" }
+                            class: "flex flex-col gap-2 p-3",
+                            h3 { class: "text-sm font-medium", "新建会话" }
                             p {
-                                class: "text-xs text-base-content/60",
+                                class: "text-xs leading-5 text-base-content/58",
                                 if props.active_project_id.is_some() {
                                     "会话标题会自动生成，无需手动输入。"
                                 } else {
@@ -70,7 +81,11 @@ pub fn Sidebar(props: SidebarProps) -> Element {
                                 }
                             }
                             button {
-                                class: if can_create_session { "btn btn-primary btn-sm" } else { "btn btn-primary btn-sm btn-disabled" },
+                                class: if can_create_session {
+                                    "btn btn-primary btn-sm min-h-8 h-8 rounded-md"
+                                } else {
+                                    "btn btn-primary btn-sm min-h-8 h-8 rounded-md btn-disabled"
+                                },
                                 disabled: !can_create_session,
                                 onclick: move |_| on_create_session.call(()),
                                 "开始新会话"
@@ -80,47 +95,72 @@ pub fn Sidebar(props: SidebarProps) -> Element {
                 }
 
                 div {
-                    class: "min-h-0 flex-1 overflow-y-auto",
+                    class: "min-h-0 flex-1 overflow-y-auto pr-1",
+                    div { class: "mb-3 flex items-center justify-between px-1",
+                        span { class: "studio-kicker", "Projects" }
+                        span { class: "text-xs text-base-content/45", "{props.projects.len()} 个项目" }
+                    }
                     ul { class: SIDEBAR_MENU_CLASS,
                         for project in props.projects {
                             li {
                                 details {
-                                    open: true,
+                                    class: "rounded-md border border-base-300 bg-base-100 p-1",
+                                    open: props.active_project_id.as_deref() == Some(project.project_id.as_str()),
                                     summary {
                                         class: if props.active_project_id.as_deref() == Some(project.project_id.as_str()) {
-                                            "font-semibold text-primary"
+                                            "rounded px-2 py-2 text-sm font-medium text-primary"
                                         } else {
-                                            "font-medium"
+                                            "rounded px-2 py-2 text-sm font-medium text-base-content/78"
                                         },
                                         onclick: {
                                             let project_id = project.project_id.clone();
                                             let on_select_project = on_select_project.clone();
                                             move |_| on_select_project.call(project_id.clone())
                                         },
-                                        "{project.project_name}"
+                                        div { class: "flex min-w-0 items-center gap-3",
+                                            span { class: "studio-dot" }
+                                            span { class: "truncate", "{project.project_name}" }
+                                        }
                                     }
                                     ul {
+                                        class: "mt-1 flex flex-col gap-1",
                                         for session in project.sessions {
                                             li {
                                                 button {
                                                     class: if props.active_session_id.as_deref() == Some(session.session_id.as_str()) {
-                                                        "btn btn-sm btn-primary btn-soft justify-between"
+                                                        "btn h-auto min-h-0 justify-between rounded px-2 py-2 text-primary shadow-none hover:bg-primary/10"
                                                     } else {
-                                                        "btn btn-ghost btn-sm justify-between"
+                                                        "btn h-auto min-h-0 justify-between rounded px-2 py-2 text-base-content/72 shadow-none hover:bg-base-200/80"
                                                     },
                                                     onclick: {
                                                         let session_id = session.session_id.clone();
                                                         let on_select_session = on_select_session.clone();
                                                         move |_| on_select_session.call(session_id.clone())
                                                     },
-                                                    span { class: "truncate", "{session.title}" }
-                                                    span { class: session.badge.class_name, "{session.badge.label}" }
+                                                    div { class: "flex min-w-0 flex-1 flex-col items-start gap-1 text-left",
+                                                        span { class: "w-full truncate text-sm font-medium", "{session.title}" }
+                                                        span { class: "text-[11px] text-base-content/45", "Agent session" }
+                                                    }
+                                                    span { class: "{session.badge.class_name} badge-sm border-none", "{session.badge.label}" }
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
+                        }
+                    }
+                }
+
+                div {
+                    class: "border-t border-base-300/70 pt-4",
+                    button {
+                        class: "btn btn-ghost h-auto w-full justify-start rounded-md px-2 py-2 text-left",
+                        onclick: move |_| on_open_settings.call(()),
+                        div {
+                            class: "flex flex-col items-start gap-1",
+                            span { class: "font-medium", "设置与运行时" }
+                            span { class: "text-xs text-base-content/55", "检查 Pi 运行时和配置目录" }
                         }
                     }
                 }

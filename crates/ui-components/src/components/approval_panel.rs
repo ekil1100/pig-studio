@@ -14,21 +14,28 @@ pub fn ApprovalPanel(props: ApprovalPanelProps) -> Element {
     let on_reject = props.on_reject.clone();
 
     rsx! {
-        div { class: "flex flex-col gap-3",
+        section { class: "flex flex-col gap-4",
+            div { class: "flex items-end justify-between gap-3 px-1",
+                div {
+                    p { class: "studio-kicker", "Approvals" }
+                    h2 { class: "mt-1 text-lg font-semibold", "待处理审批" }
+                }
+                span { class: "badge badge-warning border-none px-3 py-3 font-medium", "{props.approvals.len()} 条待处理" }
+            }
             for approval in props.approvals {
                 div { class: CARD_CLASS,
-                    div { class: "card-body gap-3 p-4",
+                    div { class: "flex flex-col gap-3 border border-warning/30 bg-warning/6 p-4",
                         div {
                             class: "flex items-center justify-between gap-3",
-                            h3 { class: "card-title text-base", "{approval.title}" }
-                            span { class: "badge badge-warning", "待审批" }
+                            h3 { class: "text-sm font-semibold", "{approval.title}" }
+                            span { class: "badge badge-warning border-none px-3 py-3 font-medium", "待审批" }
                         }
-                        p { class: "text-sm text-base-content/80", "{approval.summary}" }
-                        p { class: "text-xs text-base-content/60", "请求 ID: {approval.request_id}" }
+                        p { class: "whitespace-pre-wrap text-[15px] leading-7 text-base-content/76", "{approval.summary}" }
+                        p { class: "text-sm text-base-content/52", "请求 ID: {approval.request_id}" }
                         div {
                             class: "flex gap-2",
                             button {
-                                class: "btn btn-primary btn-sm",
+                                class: "btn btn-primary btn-sm rounded-md px-4",
                                 onclick: {
                                     let approval_id = approval.approval_id.clone();
                                     let on_approve = on_approve.clone();
@@ -37,7 +44,7 @@ pub fn ApprovalPanel(props: ApprovalPanelProps) -> Element {
                                 "批准"
                             }
                             button {
-                                class: "btn btn-outline btn-sm",
+                                class: "btn btn-outline btn-sm rounded-md px-4",
                                 onclick: {
                                     let approval_id = approval.approval_id.clone();
                                     let on_reject = on_reject.clone();

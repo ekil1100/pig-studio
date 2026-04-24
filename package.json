@@ -5,16 +5,17 @@
 	"scripts": {
 		"build:styles": "bunx @tailwindcss/cli -i ./assets/styles/app.css -o ./assets/styles/generated.css --minify",
 		"watch:styles": "bunx @tailwindcss/cli -i ./assets/styles/app.css -o ./assets/styles/generated.css --watch",
-		"build": "bun run build:styles && export PATH=\"$HOME/.cargo/bin:$(dirname \"$(rustup which cargo)\"):$PATH\"; cargo build --workspace",
-		"dev": "bun run build:styles && export PATH=\"$HOME/.cargo/bin:$(dirname \"$(rustup which cargo)\"):$PATH\"; cargo run -p app-desktop",
-		"bundle:desktop": "export PATH=\"$HOME/.cargo/bin:$(dirname \"$(rustup which cargo)\"):$PATH\"; dx bundle --package app-desktop",
+		"build": "bun run build:styles && export PATH=\"$HOME/.cargo/bin:$(dirname \"$(rustup which cargo)\"):$PATH\" && cargo build --workspace",
+		"dev": "bun run build:styles && export PATH=\"$HOME/.cargo/bin:$(dirname \"$(rustup which cargo)\"):$PATH\" && cargo run -p app-desktop",
+		"bundle:desktop": "export PATH=\"$HOME/.cargo/bin:$(dirname \"$(rustup which cargo)\"):$PATH\" && dx bundle --package app-desktop",
 		"verify:bundle": "bun scripts/verify-bundle.mjs",
-		"test": "export PATH=\"$HOME/.cargo/bin:$(dirname \"$(rustup which cargo)\"):$PATH\"; cargo test --workspace",
-		"format": "export PATH=\"$HOME/.cargo/bin:$(dirname \"$(rustup which cargo)\"):$PATH\"; cargo fmt --all && bunx biome format --write docs package.json README.md scripts"
+		"test": "export PATH=\"$HOME/.cargo/bin:$(dirname \"$(rustup which cargo)\"):$PATH\" && cargo test --workspace",
+		"format": "export PATH=\"$HOME/.cargo/bin:$(dirname \"$(rustup which cargo)\"):$PATH\" && cargo fmt --all && bunx biome format --write docs package.json README.md scripts"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.4.12",
 		"@tailwindcss/cli": "^4.2.2",
-		"daisyui": "^5.5.19"
+		"daisyui": "^5.5.19",
+		"tailwindcss": "^4.2.4"
 	}
 }

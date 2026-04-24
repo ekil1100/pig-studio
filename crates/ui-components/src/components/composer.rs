@@ -21,24 +21,42 @@ pub fn Composer(props: ComposerProps) -> Element {
 
     rsx! {
         div {
-            class: "card bg-base-100 shadow-sm",
+            class: "studio-surface sticky bottom-0",
             div {
-                class: "card-body gap-3 p-4",
+                class: "flex flex-col gap-3 p-4",
+                div { class: "flex items-start justify-between gap-3",
+                    div {
+                        p { class: "studio-kicker", "Composer" }
+                        p { class: "mt-1 text-base font-semibold", "继续当前 agent session" }
+                    }
+                    span {
+                        class: if props.busy {
+                            "badge badge-warning border-none px-3 py-3 font-medium"
+                        } else {
+                            "badge badge-ghost border-none bg-base-200/80 px-3 py-3 font-medium"
+                        },
+                        if props.busy { "运行中" } else { "可发送" }
+                    }
+                }
                 textarea {
-                    class: "textarea textarea-bordered min-h-28 w-full",
+                    class: "studio-textarea min-h-28 w-full rounded-md px-3 py-2 text-sm leading-6",
                     value: props.value,
                     placeholder: placeholder,
                     disabled: props.busy,
                     oninput: move |event| on_input.call(event.value()),
                 }
                 div {
-                    class: "flex items-center justify-between gap-3",
+                    class: "flex flex-wrap items-center justify-between gap-3",
                     span {
-                        class: "text-xs text-base-content/60",
-                        if props.busy { "正在运行，请等待事件流更新" } else { "支持多轮连续会话" }
+                        class: "text-sm text-base-content/58",
+                        if props.busy { "正在运行，请等待事件流更新或审批结果。" } else { "支持多轮连续会话，发送内容会追加到当前上下文。" }
                     }
                     button {
-                        class: if props.busy { "btn btn-primary btn-sm btn-disabled" } else { "btn btn-primary btn-sm" },
+                        class: if props.busy {
+                            "btn btn-primary btn-sm rounded-md px-4 btn-disabled"
+                        } else {
+                            "btn btn-primary btn-sm rounded-md px-4"
+                        },
                         disabled: props.busy,
                         onclick: move |_| on_submit.call(()),
                         "发送"

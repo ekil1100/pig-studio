@@ -44,14 +44,12 @@ Codex mcp add spec-workflow-mcp -s user -- npx -y spec-workflow-mcp@latest
 
 ## 目前用到的技术栈
 
-- 前端: Next.js 15.4.6 + React 19 + TypeScript
-- 样式: Tailwind CSS 4 + ShadcnUI 组件库
-  - @https://ui.shadcn.com/docs/components 可以查看可用的组件
-  - 使用官方命令安装 ShadcnUI 组件
-- 桌面应用: Tauri 2.7.1 (Rust)
+- 前端/UI: Dioxus 0.6（Rust）
+- 样式: Tailwind CSS 4 + daisyUI 5
+- 桌面应用: Dioxus Desktop（Rust）
 - 包管理器: Bun
 
 ## 其它注意事项
 
-- 这是一个桌面优先的 Tauri 应用，所以请使用适用于桌面应用的设计语言
-- 页面设计尽量简洁，使用已有的组件库主题
+- 这是一个桌面优先的 Dioxus Desktop 应用，所以请使用适用于桌面应用的设计语言
+- 页面设计尽量简洁，优先使用现有 daisyUI 主题与组件语义

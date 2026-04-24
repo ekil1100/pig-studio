@@ -12,8 +12,8 @@
 
 ## 0. 实施前提与迁移原则
 
-1. **本计划覆盖并替代上一版 `docs/tasks-v0.1.zh-CN.md`**。上一版基于 `Next.js + Tauri`，本次以 `docs/architecture-v0.1.zh-CN.md` 为唯一技术基线。
-2. **仓库将从“前端 + Tauri”迁移为“Rust Workspace + Dioxus Desktop”**。现有 `src/`、`src-tauri/`、`next.config.ts`、`tsconfig.json`、`postcss.config.mjs` 等视为旧实现，直到新桌面应用闭环跑通后再删除。
+1. **本计划覆盖并替代上一版 `docs/tasks-v0.1.zh-CN.md`**，并以 `docs/architecture-v0.1.zh-CN.md` 为唯一技术基线。
+2. **仓库当前基线为“Rust Workspace + Dioxus Desktop”**。任何遗留的 Web 脚手架目录、前端配置文件和无效资源都应在 MVP 闭环跑通后删除。
 3. **Bun 仍保留**，但职责收缩为样式工具链与顶层脚本调度：`bun run build` 负责编译 CSS 并触发 Cargo 构建，保证团队命令习惯不变。
 4. **daisyUI / Tailwind 约束**：只使用 Tailwind utility 与 daisyUI class，不新增自定义视觉 CSS 规则；样式源文件只负责引入插件与主题。
 5. **MVP 聚焦单机本地能力**：不做团队协作、云编排、多 Agent 扩展、IDE 替代。
@@ -48,13 +48,7 @@
 ### Legacy（最终删除）
 
 - Delete: `src/**`
-- Delete: `src-tauri/**`
-- Delete: `next.config.ts`
-- Delete: `tsconfig.json`
-- Delete: `postcss.config.mjs`
-- Delete: `eslint.config.mjs`
-- Delete: `.eslintrc.js`
-- Delete: `components.json`
+- Delete: legacy web config files
 - Delete: `public/**`
 
 ---
@@ -882,13 +876,7 @@ git commit -m "feat: wire desktop app bootstrap and recovery flows"
 - Modify: `bun.lock`
 - Modify: `README.md`
 - Delete: `src/**`
-- Delete: `src-tauri/**`
-- Delete: `next.config.ts`
-- Delete: `tsconfig.json`
-- Delete: `postcss.config.mjs`
-- Delete: `eslint.config.mjs`
-- Delete: `.eslintrc.js`
-- Delete: `components.json`
+- Delete: legacy web config files
 - Delete: `public/**`
 - **Step 1: 先写 worktree 行为测试**
 
@@ -933,25 +921,19 @@ Expected: 初始失败。
 }
 ```
 
-- **Step 4: 删除旧的 Next / Tauri 代码路径**
+- **Step 4: 删除遗留 Web 脚手架代码路径**
 
 确保删除：
 
 - `src/`
-- `src-tauri/`
-- `next.config.ts`
-- `tsconfig.json`
-- `postcss.config.mjs`
-- `eslint.config.mjs`
-- `.eslintrc.js`
-- `components.json`
+- 遗留 Web 构建与 lint 配置文件
 - `public/`
 
 - **Step 5: 清理旧时代 JS 依赖并同步 lockfile**
 
 要求：
 
-1. 从 `package.json` 中移除迁移后不再使用的 Next / React / Tauri / TypeScript / ESLint 相关依赖。
+1. 从 `package.json` 中移除迁移后不再使用的 Web 前端 / TypeScript / ESLint 相关依赖。
 2. 通过 Bun 重新解析依赖并更新 `bun.lock`。
 3. 保留当前计划实际需要的样式与脚本依赖（如 `@tailwindcss/cli`、`daisyui`、`@biomejs/biome`）。
 
@@ -982,8 +964,8 @@ Expected: 样式编译成功、workspace 全量测试通过、桌面应用可构
 
 ```bash
 git add Cargo.toml package.json bun.lock assets/styles migrations crates scripts docs/manual-qa-v0.1.zh-CN.md README.md
-git rm -r src src-tauri public || true
-git rm next.config.ts tsconfig.json postcss.config.mjs eslint.config.mjs .eslintrc.js components.json || true
+git rm -r src public || true
+git rm <legacy-web-configs> || true
 git commit -m "feat: finalize dioxus desktop mvp migration"
 ```
 
@@ -1005,5 +987,4 @@ git commit -m "feat: finalize dioxus desktop mvp migration"
 - 设置入口必须位于侧边栏底部区域。
 - 状态视觉映射必须符合架构文档中的 daisyUI badge 规范。
 - 恢复失败必须显式可见，并提供重建入口，不能静默丢失会话。
-- MVP 完成前，旧的 `Next.js + Tauri` 路径不得继续作为主实现保留。
-
+- MVP 完成前，任何遗留的 Web 脚手架路径不得继续作为主实现保留。
