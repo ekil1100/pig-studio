@@ -11,6 +11,7 @@ path = "src/lib.rs"
 [dependencies]
 app-core = { path = "../app-core" }
 chrono = { version = "0.4", features = ["serde"] }
+coss-ui-dioxus = { path = "../coss-ui-dioxus" }
 dioxus = { version = "0.6.3", features = ["desktop"] }
 domain = { path = "../domain" }
 infra-pimono = { path = "../infra-pimono" }

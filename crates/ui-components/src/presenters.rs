@@ -1,9 +1,10 @@
+use coss_ui_dioxus::BadgeVariant;
 use domain::{RuntimeHealth, SessionStatus};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct StatusBadgeMeta {
     pub label: &'static str,
-    pub class_name: &'static str,
+    pub variant: BadgeVariant,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -47,31 +48,31 @@ pub fn session_status_badge(status: SessionStatus) -> StatusBadgeMeta {
     match status {
         SessionStatus::Idle => StatusBadgeMeta {
             label: "空闲",
-            class_name: "badge badge-ghost",
+            variant: BadgeVariant::Ghost,
         },
         SessionStatus::Running => StatusBadgeMeta {
             label: "运行中",
-            class_name: "badge badge-info",
+            variant: BadgeVariant::Info,
         },
         SessionStatus::WaitingApproval => StatusBadgeMeta {
             label: "等待审批",
-            class_name: "badge badge-warning",
+            variant: BadgeVariant::Warning,
         },
         SessionStatus::Blocked => StatusBadgeMeta {
             label: "已阻塞",
-            class_name: "badge badge-secondary",
+            variant: BadgeVariant::Secondary,
         },
         SessionStatus::Completed => StatusBadgeMeta {
             label: "已完成",
-            class_name: "badge badge-success",
+            variant: BadgeVariant::Success,
         },
         SessionStatus::Failed => StatusBadgeMeta {
             label: "失败",
-            class_name: "badge badge-error",
+            variant: BadgeVariant::Error,
         },
         SessionStatus::Interrupted => StatusBadgeMeta {
             label: "已中断",
-            class_name: "badge badge-neutral",
+            variant: BadgeVariant::Neutral,
         },
     }
 }
@@ -106,10 +107,10 @@ pub fn build_session_banner(status: SessionStatus) -> SessionBannerView {
     }
 }
 
-pub fn runtime_health_summary(health: &RuntimeHealth) -> (&'static str, &'static str) {
+pub fn runtime_health_summary(health: &RuntimeHealth) -> (&'static str, BadgeVariant) {
     if health.available {
-        ("运行时可用", "badge badge-success")
+        ("运行时可用", BadgeVariant::Success)
     } else {
-        ("运行时异常", "badge badge-error")
+        ("运行时异常", BadgeVariant::Error)
     }
 }

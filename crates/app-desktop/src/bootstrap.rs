@@ -1302,7 +1302,7 @@ pub fn recover_workspace(snapshot: StartupSnapshot) -> WorkspaceState {
                     title: "恢复工作区".into(),
                     body: format!("启动时已恢复 {} 的会话上下文。", session.title),
                     meta: runtime_summary.into(),
-                    tone_class: "divider",
+                    tone_class: "tone-muted",
                 }],
                 approvals,
             })
@@ -1343,7 +1343,7 @@ fn build_timeline(
                 restored.session.title
             ),
             meta: runtime_summary.into(),
-            tone_class: "divider",
+            tone_class: "tone-muted",
         }]);
     }
 
@@ -1360,7 +1360,7 @@ fn event_to_timeline_entry(event: StoredEvent) -> AppResult<TimelineEntryView> {
                 title: "会话已绑定".into(),
                 body: format!("已绑定远端会话：{pimono_session_id}"),
                 meta,
-                tone_class: "divider divider-accent",
+                tone_class: "tone-accent",
             })
         }
         "run_started" => {
@@ -1370,7 +1370,7 @@ fn event_to_timeline_entry(event: StoredEvent) -> AppResult<TimelineEntryView> {
                 title: "运行已启动".into(),
                 body: format!("远端运行 ID：{pimono_run_id}"),
                 meta,
-                tone_class: "divider divider-info",
+                tone_class: "tone-info",
             })
         }
         "text_delta" => {
@@ -1380,7 +1380,7 @@ fn event_to_timeline_entry(event: StoredEvent) -> AppResult<TimelineEntryView> {
                 title: "输出片段".into(),
                 body: text,
                 meta,
-                tone_class: "divider",
+                tone_class: "tone-muted",
             })
         }
         "approval_requested" => {
@@ -1392,7 +1392,7 @@ fn event_to_timeline_entry(event: StoredEvent) -> AppResult<TimelineEntryView> {
                 title: format!("审批请求 · {request_type}"),
                 body: payload_json,
                 meta,
-                tone_class: "divider divider-warning",
+                tone_class: "tone-warning",
             })
         }
         "approval_decision" => {
@@ -1409,14 +1409,14 @@ fn event_to_timeline_entry(event: StoredEvent) -> AppResult<TimelineEntryView> {
                 title: "审批决策".into(),
                 body,
                 meta,
-                tone_class: "divider divider-accent",
+                tone_class: "tone-accent",
             })
         }
         "run_completed" => Ok(TimelineEntryView {
             title: "运行完成".into(),
             body: "代理已完成当前运行。".into(),
             meta,
-            tone_class: "divider divider-success",
+            tone_class: "tone-success",
         }),
         "run_failed" => {
             let code = json_string_field(&event.payload_json, "code")?;
@@ -1429,14 +1429,14 @@ fn event_to_timeline_entry(event: StoredEvent) -> AppResult<TimelineEntryView> {
                 },
                 body: message,
                 meta,
-                tone_class: "divider divider-error",
+                tone_class: "tone-error",
             })
         }
         _ => Ok(TimelineEntryView {
             title: format!("事件 · {}", event.event_type),
             body: event.payload_json,
             meta,
-            tone_class: "divider",
+            tone_class: "tone-muted",
         }),
     }
 }

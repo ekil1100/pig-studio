@@ -4,9 +4,9 @@
 
 **Goal:** 基于 `docs/architecture-v0.1.zh-CN.md` 与 `docs/prd-v0.1.zh-CN.md`，将仓库重构为 Pig Studio v0.1 的 Dioxus Desktop Rust Workspace，并交付项目管理、会话生命周期、运行事件流、审批、恢复与运行时设置的 MVP。
 
-**Architecture:** 严格采用架构文档定义的分层结构：`Presentation -> Application -> Domain -> Infrastructure`。Presentation 使用 Dioxus Desktop + Tailwind CSS v4 + daisyUI 5 构建桌面 UI；Application 通过用例与事件总线编排流程；Domain 封装 `Project / Session / Run` 聚合与状态机；Infrastructure 提供 SQLite、`pi-mono`、设置、文件系统、平台与 worktree 能力。
+**Architecture:** 严格采用架构文档定义的分层结构：`Presentation -> Application -> Domain -> Infrastructure`。Presentation 使用 Dioxus Desktop + Tailwind CSS v4 + coss UI 5 构建桌面 UI；Application 通过用例与事件总线编排流程；Domain 封装 `Project / Session / Run` 聚合与状态机；Infrastructure 提供 SQLite、`pi-mono`、设置、文件系统、平台与 worktree 能力。
 
-**Tech Stack:** Rust stable、Dioxus Desktop、Tokio、Serde、SQLite、tracing、Tailwind CSS v4、daisyUI 5、Bun。
+**Tech Stack:** Rust stable、Dioxus Desktop、Tokio、Serde、SQLite、tracing、Tailwind CSS v4、coss UI 5、Bun。
 
 ---
 
@@ -15,7 +15,7 @@
 1. **本计划覆盖并替代上一版 `docs/tasks-v0.1.zh-CN.md`**，并以 `docs/architecture-v0.1.zh-CN.md` 为唯一技术基线。
 2. **仓库当前基线为“Rust Workspace + Dioxus Desktop”**。任何遗留的 Web 脚手架目录、前端配置文件和无效资源都应在 MVP 闭环跑通后删除。
 3. **Bun 仍保留**，但职责收缩为样式工具链与顶层脚本调度：`bun run build` 负责编译 CSS 并触发 Cargo 构建，保证团队命令习惯不变。
-4. **daisyUI / Tailwind 约束**：只使用 Tailwind utility 与 daisyUI class，不新增自定义视觉 CSS 规则；样式源文件只负责引入插件与主题。
+4. **coss UI / Tailwind 约束**：只使用 Tailwind utility 与 coss UI class，不新增自定义视觉 CSS 规则；样式源文件只负责引入插件与主题。
 5. **MVP 聚焦单机本地能力**：不做团队协作、云编排、多 Agent 扩展、IDE 替代。
 6. **持久化边界**：Pig Studio 只存项目元数据、会话索引、事件、审批、设置与恢复所需非敏感数据；敏感值不落 SQLite。
 7. **删除项目策略**：默认只解除应用关联，不删除真实项目目录与外部运行时数据。
@@ -30,7 +30,7 @@
 - Create: `rust-toolchain.toml` — 固定 stable 工具链。
 - Modify: `package.json` — 样式编译与顶层 build/format 脚本。
 - Modify: `bun.lock` — 固定样式工具链依赖版本。
-- Create: `assets/styles/app.css` — Tailwind + daisyUI 入口。
+- Create: `assets/styles/app.css` — Tailwind + coss UI 入口。
 - Create: `assets/styles/generated.css` — 编译产物与仓库内基线文件，作为桌面 bundle resource 供 Dioxus Desktop 加载。
 - Create: `migrations/0001_init.sql` — 初始数据库 schema。
 
@@ -102,7 +102,7 @@ components = ["rustfmt", "clippy"]
 Run:
 
 ```bash
-bun add -d @tailwindcss/cli daisyui @biomejs/biome
+bun add -d @tailwindcss/cli @biomejs/biome
 cargo install --locked dioxus-cli
 ```
 
@@ -113,24 +113,26 @@ Expected: 样式工具链依赖安装完成并写入 `bun.lock`，且 `dx --vers
 ```json
 {
   "scripts": {
-    "build:styles": "bunx @tailwindcss/cli -i ./assets/styles/app.css -o ./assets/styles/generated.css --minify",
-    "watch:styles": "bunx @tailwindcss/cli -i ./assets/styles/app.css -o ./assets/styles/generated.css --watch",
+    "build:styles": "tailwindcss -i ./assets/styles/app.css -o ./assets/styles/generated.css --minify",
+    "watch:styles": "tailwindcss -i ./assets/styles/app.css -o ./assets/styles/generated.css --watch",
     "build": "bun run build:styles && cargo build --workspace",
-    "format": "cargo fmt --all && bunx biome format --write docs package.json assets/styles"
+    "format": "cargo fmt --all && biome format --write docs package.json assets/styles"
   }
 }
 ```
 
-- **Step 4: 写 Tailwind v4 + daisyUI 入口 CSS**
+- **Step 4: 写 Tailwind v4 + coss UI 入口 CSS**
 
 `assets/styles/app.css` 最小内容：
 
 ```css
 @import 'tailwindcss';
-@plugin "daisyui" {
-  themes:
-    light --default,
-    dark --prefersdark;
+
+@theme {
+  --color-background: oklch(0.985 0.002 286);
+  --color-foreground: oklch(0.24 0.016 270);
+  --color-primary: oklch(0.52 0.14 260);
+  --color-border: oklch(0.914 0.006 286);
 }
 ```
 
@@ -711,7 +713,7 @@ Expected: crate 创建成功。
 fn maps_waiting_approval_to_warning_badge() {
     let meta = session_status_badge(SessionStatus::WaitingApproval);
     assert_eq!(meta.label, "等待审批");
-    assert_eq!(meta.class_name, "badge badge-warning");
+    assert_eq!(meta.variant, BadgeVariant::Warning);
 }
 
 #[test]
@@ -733,13 +735,13 @@ Expected: 初始失败。
 
 必须覆盖架构文档中的 badge 规范：
 
-- `Idle -> badge-ghost`
-- `Running -> badge-info`
-- `WaitingApproval -> badge-warning`
-- `Blocked -> badge-secondary`
-- `Completed -> badge-success`
-- `Failed -> badge-error`
-- `Interrupted -> badge-neutral`
+- `Idle -> coss-badge-ghost`
+- `Running -> coss-badge-info`
+- `WaitingApproval -> coss-badge-warning`
+- `Blocked -> coss-badge-secondary`
+- `Completed -> coss-badge-success`
+- `Failed -> coss-badge-error`
+- `Interrupted -> coss-badge-neutral`
 - **Step 4: 用 Dioxus 组件实现主布局**
 
 组件职责：
@@ -750,18 +752,18 @@ Expected: 初始失败。
 - `Composer`：输入框、发送按钮、运行状态提示
 - `ApprovalPanel`：审批卡片与决策按钮
 - `SettingsPanel`：运行时路径、环境变量、健康状态
-- **Step 5: 严格使用 daisyUI / Tailwind class**
+- **Step 5: 严格使用 coss-ui-dioxus 组件 / Tailwind 布局 class**
 
-界面 class 只用如下形式：
+交互与展示 primitive 优先直接引用 `coss-ui-dioxus` 组件：
 
 ```rust
-class: "btn btn-primary btn-sm"
-class: "badge badge-warning"
-class: "menu bg-base-200 rounded-box"
-class: "card bg-base-100 shadow-sm"
+Button { size: ButtonSize::Sm, "发送" }
+Badge { variant: BadgeVariant::Warning, "待审批" }
+Surface { class: "flex flex-col gap-4", ... }
+Card { class: "p-5", ... }
 ```
 
-不要引入额外自定义样式文件。
+布局可继续使用 Tailwind class；不要在业务组件里直接拼接 `coss-button` / `coss-badge` 等组件内部 class。
 
 - **Step 6: 跑 `ui-components` 测试并做编译检查**
 
@@ -916,7 +918,7 @@ Expected: 初始失败。
     "bundle:desktop": "dx bundle --package app-desktop",
     "verify:bundle": "bun scripts/verify-bundle.mjs",
     "test": "cargo test --workspace",
-    "format": "cargo fmt --all && bunx biome format --write docs package.json assets/styles"
+    "format": "cargo fmt --all && biome format --write docs package.json assets/styles"
   }
 }
 ```
@@ -935,7 +937,7 @@ Expected: 初始失败。
 
 1. 从 `package.json` 中移除迁移后不再使用的 Web 前端 / TypeScript / ESLint 相关依赖。
 2. 通过 Bun 重新解析依赖并更新 `bun.lock`。
-3. 保留当前计划实际需要的样式与脚本依赖（如 `@tailwindcss/cli`、`daisyui`、`@biomejs/biome`）。
+3. 保留当前计划实际需要的样式与脚本依赖（如 `@tailwindcss/cli`、`@biomejs/biome`）。
 
 - **Step 6: 编写手工验收文档**
 
@@ -985,6 +987,6 @@ git commit -m "feat: finalize dioxus desktop mvp migration"
 - `events` 必须 append-only，且运行事件遵循“先持久化，后广播”。
 - 左侧导航必须是 `Project -> Session`，而不是普通聊天列表。
 - 设置入口必须位于侧边栏底部区域。
-- 状态视觉映射必须符合架构文档中的 daisyUI badge 规范。
+- 状态视觉映射必须符合架构文档中的 coss UI badge 规范。
 - 恢复失败必须显式可见，并提供重建入口，不能静默丢失会话。
 - MVP 完成前，任何遗留的 Web 脚手架路径不得继续作为主实现保留。

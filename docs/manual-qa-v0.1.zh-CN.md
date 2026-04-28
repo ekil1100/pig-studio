@@ -21,11 +21,11 @@
 
 分别验证以下状态能以正确 badge 呈现：
 
-- `Running` -> `badge-info`
-- `WaitingApproval` -> `badge-warning`
-- `Blocked` -> `badge-secondary`
-- `Failed` -> `badge-error`
-- `Interrupted` -> `badge-neutral`
+- `Running` -> `coss-badge-info`
+- `WaitingApproval` -> `coss-badge-warning`
+- `Blocked` -> `coss-badge-secondary`
+- `Failed` -> `coss-badge-error`
+- `Interrupted` -> `coss-badge-neutral`
 
 ## 4. 审批与设置
 

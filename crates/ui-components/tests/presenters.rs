@@ -1,3 +1,4 @@
+use coss_ui_dioxus::BadgeVariant;
 use domain::SessionStatus;
 use ui_components::{build_session_banner, session_status_badge};
 
@@ -5,7 +6,7 @@ use ui_components::{build_session_banner, session_status_badge};
 fn maps_waiting_approval_to_warning_badge() {
     let meta = session_status_badge(SessionStatus::WaitingApproval);
     assert_eq!(meta.label, "等待审批");
-    assert_eq!(meta.class_name, "badge badge-warning");
+    assert_eq!(meta.variant, BadgeVariant::Warning);
 }
 
 #[test]

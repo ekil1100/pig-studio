@@ -19,7 +19,8 @@ Pig Studio 是一个基于 `pi` / `pi-mono` 的原生桌面 `agent session works
 
 - Rust stable
 - Dioxus Desktop
-- Tailwind CSS v4 + daisyUI v5
+- Tailwind CSS v4 + coss UI 语义样式
+- base-ui-dioxus -> coss-ui-dioxus -> Pig Studio UI
 - SQLite
 - Bun + Cargo
 
@@ -34,6 +35,8 @@ pig-studio/
 ├── crates/
 │   ├── app-core/
 │   ├── app-desktop/
+│   ├── base-ui-dioxus/
+│   ├── coss-ui-dioxus/
 │   ├── domain/
 │   ├── infra-pimono/
 │   ├── infra-settings/

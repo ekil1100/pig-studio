@@ -1,4 +1,5 @@
-use crate::{presenters::runtime_health_summary, theme::CARD_CLASS};
+use crate::presenters::runtime_health_summary;
+use coss_ui_dioxus::{Badge, Button, ButtonSize, ButtonVariant, Card};
 use dioxus::prelude::*;
 use domain::RuntimeHealth;
 
@@ -34,21 +35,21 @@ pub fn SettingsPanel(props: SettingsPanelProps) -> Element {
     });
 
     rsx! {
-        div { class: CARD_CLASS,
+        Card { class: "overflow-hidden",
             div { class: "flex flex-col gap-5 p-5",
                 div {
                     class: "flex flex-wrap items-center justify-between gap-3",
                     div {
                         p { class: "studio-kicker", "Runtime" }
                         h3 { class: "mt-1 text-lg font-semibold", "运行时检测" }
-                        p { class: "mt-2 text-sm leading-6 text-base-content/62", "默认自动检测 Pi 二进制与配置目录；只有检测失败时才建议手动覆盖。" }
+                        p { class: "mt-2 text-sm leading-6 text-foreground/62", "默认自动检测 Pi 二进制与配置目录；只有检测失败时才建议手动覆盖。" }
                     }
-                    span { class: "{badge_class} studio-badge", "{summary}" }
+                    Badge { variant: badge_class, "{summary}" }
                 }
 
                 div { class: "grid gap-3 md:grid-cols-2",
-                    div { class: "rounded-md border border-base-300 bg-base-200/60 p-3",
-                        div { class: "text-xs font-medium text-base-content/45", "Pi 二进制" }
+                    div { class: "rounded-md border border-border bg-muted/60 p-3",
+                        div { class: "text-xs font-medium text-foreground/45", "Pi 二进制" }
                         div { class: "mt-3 break-all text-sm font-medium leading-6",
                             if props.runtime_path.is_empty() {
                                 "未检测到"
@@ -56,10 +57,10 @@ pub fn SettingsPanel(props: SettingsPanelProps) -> Element {
                                 "{props.runtime_path}"
                             }
                         }
-                        div { class: "mt-2 text-xs text-base-content/55", "来源：{props.runtime_source_label}" }
+                        div { class: "mt-2 text-xs text-foreground/55", "来源：{props.runtime_source_label}" }
                     }
-                    div { class: "rounded-md border border-base-300 bg-base-200/60 p-3",
-                        div { class: "text-xs font-medium text-base-content/45", "Pi 配置目录" }
+                    div { class: "rounded-md border border-border bg-muted/60 p-3",
+                        div { class: "text-xs font-medium text-foreground/45", "Pi 配置目录" }
                         div { class: "mt-3 break-all text-sm font-medium leading-6",
                             if props.config_dir.is_empty() {
                                 "未检测到，将依赖 Pi 默认行为"
@@ -67,35 +68,43 @@ pub fn SettingsPanel(props: SettingsPanelProps) -> Element {
                                 "{props.config_dir}"
                             }
                         }
-                        div { class: "mt-2 text-xs text-base-content/55", "来源：{props.config_dir_source_label}" }
+                        div { class: "mt-2 text-xs text-foreground/55", "来源：{props.config_dir_source_label}" }
                     }
                 }
 
                 p {
-                    class: "rounded-md bg-base-200/70 px-3 py-2 text-sm leading-6 text-base-content/62",
+                    class: "rounded-md bg-muted/70 px-3 py-2 text-sm leading-6 text-foreground/62",
                     "{runtime_reason}"
                 }
 
                 div {
                     class: "flex flex-wrap justify-end gap-2",
-                    button {
-                        class: "btn btn-outline btn-sm rounded-md",
+                    Button {
+                        variant: ButtonVariant::Outline,
+                        size: ButtonSize::Sm,
+                        class: "rounded-md",
                         onclick: move |_| on_refresh.call(()),
                         "重新检测"
                     }
-                    button {
-                        class: "btn btn-ghost btn-sm rounded-md",
+                    Button {
+                        variant: ButtonVariant::Ghost,
+                        size: ButtonSize::Sm,
+                        class: "rounded-md",
                         onclick: move |_| on_pick_runtime_binary.call(()),
                         "选择自定义二进制"
                     }
-                    button {
-                        class: "btn btn-ghost btn-sm rounded-md",
+                    Button {
+                        variant: ButtonVariant::Ghost,
+                        size: ButtonSize::Sm,
+                        class: "rounded-md",
                         onclick: move |_| on_pick_config_dir.call(()),
                         "选择自定义配置目录"
                     }
                     if props.has_runtime_override || props.has_config_dir_override {
-                        button {
-                            class: "btn btn-warning btn-sm btn-outline rounded-md",
+                        Button {
+                            variant: ButtonVariant::WarningOutline,
+                            size: ButtonSize::Sm,
+                            class: "rounded-md",
                             onclick: move |_| on_clear_overrides.call(()),
                             "恢复自动检测"
                         }

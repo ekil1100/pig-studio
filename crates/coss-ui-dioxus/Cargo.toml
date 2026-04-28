@@ -1,0 +1,8 @@
+[package]
+name = "coss-ui-dioxus"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+base-ui-dioxus = { path = "../base-ui-dioxus" }
+dioxus = { version = "0.6.3", features = ["desktop"] }

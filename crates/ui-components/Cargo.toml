@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+coss-ui-dioxus = { path = "../coss-ui-dioxus" }
 dioxus = { version = "0.6.3", features = ["desktop"] }
 domain = { path = "../domain" }
 shared-kernel = { path = "../shared-kernel" }

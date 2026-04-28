@@ -45,11 +45,12 @@ Codex mcp add spec-workflow-mcp -s user -- npx -y spec-workflow-mcp@latest
 ## 目前用到的技术栈
 
 - 前端/UI: Dioxus 0.6（Rust）
-- 样式: Tailwind CSS 4 + daisyUI 5
+- 样式: Tailwind CSS 4 + coss UI 语义样式
+- UI 组件链路: `base-ui-dioxus -> coss-ui-dioxus -> Pig Studio`
 - 桌面应用: Dioxus Desktop（Rust）
 - 包管理器: Bun
 
 ## 其它注意事项
 
 - 这是一个桌面优先的 Dioxus Desktop 应用，所以请使用适用于桌面应用的设计语言
-- 页面设计尽量简洁，优先使用现有 daisyUI 主题与组件语义
+- 页面设计尽量简洁，优先使用 `coss-ui-dioxus` 组件和 coss UI 语义 token

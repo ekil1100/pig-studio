@@ -16,13 +16,13 @@
 
 1. v0.1 采用 Dioxus Desktop 作为桌面 UI 技术路线。
 2. PRD 已同步为“桌面端交付为唯一形态，不提供浏览器 SaaS 版本”。
-3. 在此口径下，Tailwind CSS + daisyUI 仅作为本地桌面渲染层样式系统，不改变产品桌面定位。
+3. 在此口径下，Tailwind CSS + coss UI 语义样式 仅作为本地桌面渲染层样式系统，不改变产品桌面定位。
 
 ## 2. 技术栈
 
 - 语言：`Rust`（stable 最新）
 - UI：`Dioxus`（最新稳定版，Desktop）
-- 样式：`Tailwind CSS v4` + `daisyUI v5`
+- 样式：`Tailwind CSS v4` + `coss UI 语义样式`
 - 本地存储：`SQLite`
 - 异步运行时：`Tokio`
 - 序列化：`Serde`
@@ -42,7 +42,10 @@
 
 - 基于 Dioxus Desktop 构建主窗口与页面布局。
 - 组件划分：`Sidebar`、`SessionHeader`、`EventTimeline`、`Composer`、`ApprovalPanel`、`SettingsPanel`。
-- Tailwind + daisyUI 提供统一主题与状态视觉映射。
+- UI 组件链路：`base-ui-dioxus -> coss-ui-dioxus -> ui-components/app-desktop`。
+- `base-ui-dioxus` 提供无样式 Dioxus primitive，参考 Base UI 的 headless parts 组合方式。
+- `coss-ui-dioxus` 封装 coss 风格变体、尺寸和 Tailwind class，应用层直接引用组件而不是拼接组件 class。
+- Tailwind + coss UI token 提供统一主题与状态视觉映射。
 
 ### 3.2 Application（应用层）
 
@@ -258,15 +261,15 @@
 - 主体：消息与执行事件流
 - 底部：输入框、发送操作、运行状态提示
 
-### 7.3 状态视觉规范（daisyUI）
+### 7.3 状态视觉规范（coss UI）
 
-- `idle` -> `badge-ghost`
-- `running` -> `badge-info`
-- `waiting_approval` -> `badge-warning`
-- `blocked` -> `badge-secondary`
-- `completed` -> `badge-success`
-- `failed` -> `badge-error`
-- `interrupted` -> `badge-neutral`
+- `idle` -> `coss-badge-ghost`
+- `running` -> `coss-badge-info`
+- `waiting_approval` -> `coss-badge-warning`
+- `blocked` -> `coss-badge-secondary`
+- `completed` -> `coss-badge-success`
+- `failed` -> `coss-badge-error`
+- `interrupted` -> `coss-badge-neutral`
 
 ## 8. 工程目录建议（Rust Workspace）
 
@@ -275,6 +278,8 @@ berry-studio/
   Cargo.toml
   crates/
     app-desktop/
+    base-ui-dioxus/
+    coss-ui-dioxus/
     ui-components/
     app-core/
     domain/
