@@ -141,6 +141,7 @@ pub struct DesktopModel {
     settings_open: bool,
     prefer_worktree: bool,
     notice: Option<NoticeState>,
+    runtime_context: ResolvedRuntimeContext,
     workspace: WorkspaceState,
 }
 
@@ -171,6 +172,7 @@ impl DesktopModel {
     }
 
     pub fn refresh(&mut self) {
+        self.runtime_context = self.services.resolved_runtime_context();
         self.reload();
     }
 
@@ -418,23 +420,23 @@ impl DesktopModel {
 
     pub fn refresh_runtime_detection(&mut self) {
         let context = self.services.resolved_runtime_context();
-        self.set_notice(
-            if context.runtime_lookup.health.available {
-                NoticeTone::Success
-            } else {
-                NoticeTone::Warning
-            },
-            if let Some(path) = context.runtime_lookup.resolved_path {
-                format!("已重新检测到 Pi 运行时：{}", path.display())
-            } else {
-                context
-                    .runtime_lookup
-                    .health
-                    .reason
-                    .clone()
-                    .unwrap_or_else(|| "暂未检测到可用的 Pi 运行时。".into())
-            },
-        );
+        let tone = if context.runtime_lookup.health.available {
+            NoticeTone::Success
+        } else {
+            NoticeTone::Warning
+        };
+        let message = if let Some(path) = context.runtime_lookup.resolved_path.as_ref() {
+            format!("已重新检测到 Pi 运行时：{}", path.display())
+        } else {
+            context
+                .runtime_lookup
+                .health
+                .reason
+                .clone()
+                .unwrap_or_else(|| "暂未检测到可用的 Pi 运行时。".into())
+        };
+        self.runtime_context = context;
+        self.set_notice(tone, message);
         self.reload();
     }
 
@@ -470,7 +472,8 @@ impl DesktopModel {
             now,
         ) {
             Ok(_) => {
-                let runtime_lookup = self.services.runtime_lookup_result();
+                self.runtime_context = self.services.resolved_runtime_context();
+                let runtime_lookup = self.runtime_context.runtime_lookup.clone();
                 if runtime_lookup.health.available
                     && let Some(session_id) = self.selected_session_id.clone()
                 {
@@ -524,7 +527,7 @@ impl DesktopModel {
             session.title = generated_title;
         }
 
-        let runtime_context = self.services.resolved_runtime_context();
+        let runtime_context = self.runtime_context.clone();
         let Some(runtime_path) = runtime_context.runtime_lookup.resolved_path.clone() else {
             let _ = sessions.update_status(&session.id, SessionStatus::Blocked, Utc::now());
             self.set_notice(
@@ -632,7 +635,7 @@ impl DesktopModel {
             return false;
         };
 
-        let runtime_context = self.services.resolved_runtime_context();
+        let runtime_context = self.runtime_context.clone();
         let Some(runtime_path) = runtime_context.runtime_lookup.resolved_path.clone() else {
             self.set_notice(
                 NoticeTone::Warning,
@@ -770,7 +773,7 @@ impl DesktopModel {
             return Ok(false);
         };
 
-        let runtime_context = self.services.resolved_runtime_context();
+        let runtime_context = self.runtime_context.clone();
         let Some(runtime_path) = runtime_context.runtime_lookup.resolved_path.clone() else {
             if matches!(
                 session.status,
@@ -954,6 +957,7 @@ impl DesktopModel {
     }
 
     fn from_services(services: DesktopServices) -> AppResult<Self> {
+        let runtime_context = services.resolved_runtime_context();
         let mut model = Self {
             services,
             selected_project_id: None,
@@ -961,6 +965,7 @@ impl DesktopModel {
             settings_open: false,
             prefer_worktree: true,
             notice: None,
+            runtime_context,
             workspace: WorkspaceState::default(),
         };
         model.reconcile_active_runs();
@@ -980,9 +985,11 @@ impl DesktopModel {
     }
 
     fn preview_with_notice(message: String) -> Self {
+        let services = DesktopServices::in_memory_for_preview()
+            .expect("preview services should always be available");
+        let runtime_context = services.resolved_runtime_context();
         Self {
-            services: DesktopServices::in_memory_for_preview()
-                .expect("preview services should always be available"),
+            services,
             selected_project_id: None,
             selected_session_id: None,
             settings_open: false,
@@ -991,6 +998,7 @@ impl DesktopModel {
                 tone: NoticeTone::Warning,
                 message,
             }),
+            runtime_context,
             workspace: WorkspaceState::default(),
         }
     }
@@ -999,7 +1007,7 @@ impl DesktopModel {
         let runs = self.services.database.run_repository();
         let sessions = self.services.database.session_repository();
         let events = self.services.database.event_repository();
-        let context = self.services.resolved_runtime_context();
+        let context = self.runtime_context.clone();
         let settings = StaticSettingsStore {
             settings: RuntimeSettings {
                 runtime_path: context.runtime_lookup.resolved_path.clone(),
@@ -1045,7 +1053,7 @@ impl DesktopModel {
         let session_repository = self.services.database.session_repository();
         let event_repository = self.services.database.event_repository();
         let projects = project_repository.list()?;
-        let runtime_context = self.services.resolved_runtime_context();
+        let runtime_context = self.runtime_context.clone();
 
         let mut latest_session: Option<Session> = None;
         let mut project_views = Vec::new();
@@ -1179,7 +1187,7 @@ impl DesktopModel {
         let timeline = build_timeline(
             &restored,
             event_repository.list_by_session(&restored.session.id)?,
-            &self.services.runtime_lookup_result().health,
+            &self.runtime_context.runtime_lookup.health,
         )?;
 
         Ok(ActiveSessionState {

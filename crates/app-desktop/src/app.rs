@@ -37,7 +37,7 @@ pub fn App() -> Element {
 
     use_future(move || async move {
         loop {
-            tokio::time::sleep(Duration::from_millis(350)).await;
+            tokio::time::sleep(Duration::from_millis(1500)).await;
             model.write().refresh();
         }
     });
